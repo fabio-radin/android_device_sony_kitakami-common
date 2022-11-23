@@ -251,6 +251,45 @@
     <!-- Whether device supports double tap to wake -->
     <bool name="config_supportDoubleTapWake">true</bool>
 
+    <!-- Default list of files pinned by the Pinner Service -->
+    <string-array translatable="false" name="config_defaultPinnerServiceFiles">
+        <item>"/system/framework/arm64/boot-framework.oat"</item>
+        <item>"/system/framework/framework.jar"</item>
+        <item>"/system/framework/oat/arm64/services.odex"</item>
+        <item>"/system/framework/services.jar"</item>
+        <item>"/system/framework/arm64/boot.oat"</item>
+        <item>"/system/framework/arm64/boot-core-libart.oat"</item>
+        <item>"/apex/com.android.runtime/javalib/core-oj.jar"</item>
+        <item>"/apex/com.android.runtime/javalib/core-libart.jar"</item>
+        <item>"/apex/com.android.media/javalib/updatable-media.jar"</item>
+        <item>"/system/product/priv-app/SystemUI/SystemUI.apk"</item>
+        <item>"/data/dalvik-cache/arm64/system@product@priv-app@SystemUI@SystemUI.apk@classes.dex"</item>
+        <item>"/data/dalvik-cache/arm64/system@product@priv-app@SystemUI@SystemUI.apk@classes.vdex"</item>
+        <item>"/system/lib64/libsurfaceflinger.so"</item>
+    </string-array>
+
+    <!-- Keep chosen default camera app pinned in memory for faster launching -->
+    <bool name="config_pinnerCameraApp">false</bool>
+
+    <!-- Should the pinner service pin the Home application? -->
+    <bool name="config_pinnerHomeApp">true</bool>
+
+    <!-- Values for GPS configuration -->
+    <string-array translatable="false" name="config_gpsParameters">
+        <item>XTRA_SERVER_1=https://xtrapath1.izatcloud.net/xtra3grc.bin</item>
+        <item>XTRA_SERVER_2=https://xtrapath2.izatcloud.net/xtra3grc.bin</item>
+        <item>XTRA_SERVER_3=https://xtrapath3.izatcloud.net/xtra3grc.bin</item>
+    </string-array>
+
+    <!-- The list of components which should be automatically disabled for a specific device. -->
+    <string-array name="config_deviceDisabledComponents" translatable="false">
+        <item>com.google.android.gms/com.google.android.gms.nearby.messages.service.NearbyMessagesService</item>
+        <item>com.google.android.gms/com.google.android.gms.nearby.discovery.service.DiscoveryService</item>
+    </string-array>
+
+    <!-- Disable rounded corners on windows to improve graphics performance -->
+    <bool name="config_supportsRoundedCornersOnWindows">false</bool>
+
     <!-- Whether WiFi display is supported by this device.
          There are many prerequisites for this feature to work correctly.
          Here are a few of them:
@@ -264,12 +303,6 @@
          * The device must be provisioned with HDCP keys (for protected content).
     -->
     <bool name="config_enableWifiDisplay">true</bool>
-
-    <!-- The list of components which should be automatically disabled for a specific device. -->
-    <string-array name="config_deviceDisabledComponents" translatable="false">
-        <item>com.google.android.gms/com.google.android.gms.nearby.messages.service.NearbyMessagesService</item>
-        <item>com.google.android.gms/com.google.android.gms.nearby.discovery.service.DiscoveryService</item>
-    </string-array>
 
     <!-- Whether device ignores the RSSNR signal implementation -->
     <bool name="config_ignoreRssnrSignalLevel">true</bool>
@@ -290,6 +323,12 @@
 
     <!-- Whether device supports wifi ap mac randomization -->
     <bool name="config_wifi_ap_randomization_supported">false</bool>
+
+    <!-- Enable ACS (auto channel selection) for Wifi hotspot (SAP) -->
+    <bool translatable="false" name="config_wifi_softap_acs_supported">false</bool>
+
+    <!-- Enable 802.11ac for Wifi hotspot (SAP) -->
+    <bool translatable="false" name="config_wifi_softap_ieee80211ac_supported">true</bool>
 
     <!-- List of biometric sensors on the device, in decreasing strength. Consumed by AuthService
          when registering authenticators with BiometricService. Format must be ID:Modality:Strength,

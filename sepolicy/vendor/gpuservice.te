@@ -1,3 +1,0 @@
-allow gpuservice opengles_prop:file getattr;
-allow gpuservice opengles_prop:file open;
-allow gpuservice opengles_prop:file read;

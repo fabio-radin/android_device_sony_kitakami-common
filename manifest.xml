@@ -27,15 +27,6 @@
         </interface>
     </hal>
     <hal format="hidl">
-        <name>android.hardware.bluetooth.audio</name>
-        <transport>hwbinder</transport>
-        <version>2.0</version>
-        <interface>
-            <name>IBluetoothAudioProvidersFactory</name>
-            <instance>default</instance>
-        </interface>
-    </hal>
-    <hal format="hidl">
         <name>android.hardware.camera.provider</name>
         <transport arch="32">passthrough</transport>
         <version>2.4</version>
@@ -53,7 +44,7 @@
             <instance>default</instance>
         </interface>
     </hal>
-   <hal format="hidl">
+    <hal format="hidl">
         <name>android.hardware.drm</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -114,6 +105,8 @@
             <name>IMapper</name>
             <instance>default</instance>
         </interface>
+        <fqname>@3.0::IMapper/default</fqname>
+        <fqname>@4.0::IMapper/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.keymaster</name>
@@ -190,15 +183,6 @@
         </interface>
     </hal>
     <hal format="hidl">
-        <name>android.hardware.renderscript</name>
-        <transport arch="32+64">passthrough</transport>
-        <version>1.0</version>
-        <interface>
-            <name>IDevice</name>
-            <instance>default</instance>
-        </interface>
-    </hal>
-    <hal format="hidl">
         <name>android.hardware.sensors</name>
         <transport arch="32+64">passthrough</transport>
         <version>1.0</version>
@@ -227,7 +211,7 @@
     </hal>
     <hal format="hidl">
         <name>android.hardware.vibrator</name>
-        <transport arch="32+64">passthrough</transport>
+        <transport>hwbinder</transport>
         <version>1.0</version>
         <interface>
             <name>IVibrator</name>

@@ -1,5 +1,10 @@
+allow toolbox file_contexts_file:file r_file_perms;
+allow toolbox init:fifo_file rw_file_perms;
+allow toolbox sysfs:file r_file_perms;
+allow toolbox sysfs_devices_system_cpu:file write;
 allow toolbox diag_data_file:dir { getattr open read remove_name rmdir write };
 allow toolbox self:capability dac_override;
-allow toolbox diag_data_file:dir search;
+allow toolbox diag_data_file:dir { create_dir_perms search };
 allow toolbox firmware_file:dir { open read rmdir write };
 allow toolbox firmware_file:dir search;
+

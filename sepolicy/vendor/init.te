@@ -33,9 +33,11 @@ allow init vfat:file { getattr open read };
 allow init proc_interrupts:file getattr;
 allow init diag_data_file:dir mounton;
 allow init hal_drm_hwservice:hwservice_manager add;
+allow init hal_fingerprint_hwservice:hwservice_manager add;
 allow init hal_light_hwservice:hwservice_manager add;
 allow init hidl_base_hwservice:hwservice_manager add;
 allow init hwservicemanager:binder { call transfer };
+allow init iddd:unix_dgram_socket sendto;
 allow init ion_device:chr_file { open read };
 allow init proc:file write;
 allow init sysfs:file { open read setattr write };
@@ -44,14 +46,10 @@ allow init sysfs_graphics:file { open read write };
 allow init tee_device:chr_file { open read };
 allow init vendor_file:file execute_no_trans;
 allow init vndbinder_device:chr_file { ioctl open read write };
+allow init fingerprintd_data_file:file rename;
 allow init system_server:binder call;
-allow init sysfs_livedisplay_tuneable:file setattr;
 allow init hal_drm_hwservice:hwservice_manager { add find };
 allow init hal_fingerprint_hwservice:hwservice_manager { add find };
 allow init iorapd_data_file:file rw_file_perms;
 allow init system_file:dir relabelfrom;
 allow init system_file:file { execute_no_trans relabelfrom };
-allow init sysfs_devices_system_cpu:file rw_file_perms;
-
-# Allow init to read files in /lta-label
-r_dir_file(init, lta_label)

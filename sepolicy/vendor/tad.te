@@ -10,7 +10,7 @@ allow tad proc:file r_file_perms;
 
 # Allow tad to work it's magic
 allow tad trim_area_partition_device:blk_file { ioctl rw_file_perms };
+allow tad block_device:blk_file { ioctl open read write rw_file_perms };
 allow tad block_device:dir search;
 allow tad tmpfs:file rw_file_perms;
-allow tad trim_area_partition_device:blk_file ioctl;
 

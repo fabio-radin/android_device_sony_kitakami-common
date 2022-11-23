@@ -1,2 +1,7 @@
-com.sony.timekeep u:object_r:timekeep_service:s0
-rcs               u:object_r:radio_service:s0
+#line 1 "vendor/semc/system/sepolicy/Camera_Extension_API/1.1.0/service_contexts"
+media.cameraextension                     u:object_r:mediaserver_service:s0
+
+#line 1 "vendor/semc/system/sepolicy/Image_Processor_API/1.1.0/service_contexts"
+media.cacao                               u:object_r:mediaserver_service:s0
+
+com.sony.timekeep                         u:object_r:timekeep_service:s0

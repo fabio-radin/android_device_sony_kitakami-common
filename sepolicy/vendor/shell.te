@@ -1,3 +1,4 @@
+allow shell kernel:system syslog_read;
 allow shell alarm_boot_prop:file { getattr open };
 allow shell alarm_handled_prop:file { getattr open };
 allow shell alarm_instance_prop:file { getattr open };
@@ -106,3 +107,4 @@ allow shell wififtmd_prop:file { getattr open };
 allow shell wigig_prop:file { getattr open };
 allow shell xlat_prop:file { getattr open };
 allow shell secd_exec:file { getattr read };
+get_prop(shell, camera_prop)

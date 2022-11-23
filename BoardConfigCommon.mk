@@ -1,5 +1,6 @@
 #
 # Copyright (C) 2016 The CyanogenMod Project
+# Copyright (C) 2017-2020 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +20,6 @@ COMMON_PATH := device/sony/kitakami-common
 TARGET_SPECIFIC_HEADER_PATH += $(COMMON_PATH)/include
 
 BOARD_VENDOR := sony
-
-# Build
-BUILD_BROKEN_DUP_RULES := true
 
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := MSM8994
@@ -52,6 +50,8 @@ ENABLE_CPUSETS := true
 
 # Boot image/kernel
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 boot_cpus=0-5 loop.max_part=7 dwc3_msm.hvdcp_max_current=1500 dwc3_msm.prop_chg_detect=Y coherent_pool=2M swiotlb=2048
+BOARD_KERNEL_CMDLINE += zram.backend=z3fold
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_BASE := 0x00000000
@@ -60,6 +60,10 @@ BOARD_RAMDISK_OFFSET := 0x02000000
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/sony/msm8994
+
+# Kernel flags
+TARGET_KERNEL_ADDITIONAL_FLAGS := \
+    HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument"
 
 # Audio
 AUDIO_FEATURE_ENABLED_ACDB_LICENSE := true
@@ -73,7 +77,7 @@ AUDIO_FEATURE_ENABLED_FLAC_OFFLOAD := true
 AUDIO_FEATURE_ENABLED_FLUENCE := true
 AUDIO_FEATURE_ENABLED_HFP := true
 AUDIO_FEATURE_ENABLED_INCALL_MUSIC := false
-AUDIO_FEATURE_ENABLED_KPI_OPTIMIZE := false
+AUDIO_FEATURE_ENABLED_KPI_OPTIMIZE := true
 AUDIO_FEATURE_ENABLED_MULTI_VOICE_SESSIONS := true
 AUDIO_FEATURE_ENABLED_PCM_OFFLOAD := true
 AUDIO_FEATURE_ENABLED_PCM_OFFLOAD_24 := true
@@ -83,16 +87,20 @@ AUDIO_USE_LL_AS_PRIMARY_OUTPUT := true
 BOARD_SUPPORTS_SOUND_TRIGGER := true
 BOARD_USES_ALSA_AUDIO := true
 USE_CUSTOM_AUDIO_POLICY := 1
-USE_XML_AUDIO_POLICY_CONF := 1
+
+# FM radio
+BOARD_HAVE_BCM_FM := true
 
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(COMMON_PATH)/bluetooth
 BOARD_CUSTOM_BT_CONFIG := $(COMMON_PATH)/bluetooth/vnd_generic.txt
 BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_BCM := true
+PRODUCT_PLATFORM_SOD := true
 
 # Camera
 TARGET_USES_MEDIA_EXTENSIONS := true
+MALLOC_SVELTE_FOR_LIBC32 := true
 
 TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
     /system/bin/cameraserver=25 \
@@ -105,36 +113,34 @@ TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
 
 # Charger
 BOARD_CHARGER_SHOW_PERCENTAGE := true
-BOARD_CHARGER_DISABLE_INIT_BLANK := true
+HEALTHD_USE_BATTERY_INFO := true
+
+# Dexpreopt
+WITH_DEXPREOPT_DEBUG_INFO := false
 
 # Display
-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
+TARGET_SCREEN_DENSITY := 320
 TARGET_USES_ION := true
 TARGET_USES_NEW_ION_API := true
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
-TARGET_USES_C2D_COMPOSITION := true
+TARGET_DISABLE_POSTRENDER_CLEANUP := true
 USE_OPENGL_RENDERER := true
 
-MAX_EGL_CACHE_KEY_SIZE := 12*1024
-MAX_EGL_CACHE_SIZE := 2048*1024
-
 HAVE_ADRENO_SOURCE := false
-OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
+# OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
 
-VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
-SF_VSYNC_EVENT_PHASE_OFFSET_NS := 6000000
+# DRM
+TARGET_ENABLE_MEDIADRM_64 := true
 
 # Encryption
 TARGET_HW_DISK_ENCRYPTION := true
+TARGET_LEGACY_HW_DISK_ENCRYPTION := true
 
 # Extended filesystem support
 TARGET_EXFAT_DRIVER := sdfat
 
 # Filesystem
 TARGET_FS_CONFIG_GEN := $(COMMON_PATH)/config.fs
-
-# FM radio
-BOARD_HAVE_BCM_FM := true
 
 # BT/FM (Broadcom): Adjust the sysfs patch for 3.10 kernel
 BOARD_HAVE_BCM_FM_SYSFS := "/sys/bus/platform/drivers/bcm_ldisc/bcm_ldisc/"
@@ -144,6 +150,7 @@ BOARD_BRCM_HCI_NUM := 26
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
+BOARD_ROOT_EXTRA_FOLDERS := firmware persist
 
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
@@ -152,9 +159,8 @@ TARGET_PROVIDES_LIBLIGHT := true
 DEVICE_MANIFEST_FILE := $(COMMON_PATH)/manifest.xml
 PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
 
-ifneq ($(BOARD_HAVE_RADIO),false)
-DEVICE_MANIFEST_FILE += $(COMMON_PATH)/manifest_radio.xml
-endif
+# HWUI
+HWUI_COMPILE_FOR_PERF := true
 
 # Init
 TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
@@ -164,12 +170,7 @@ TARGET_USES_NO_MTU_IPACM := true
 
 # Properties
 TARGET_SYSTEM_PROP += $(COMMON_PATH)/system.prop
-
-BOARD_ROOT_EXTRA_FOLDERS := \
-    firmware \
-    persist \
-    lta-label \
-    rca
+TARGET_PRODUCT_PROP += $(COMMON_PATH)/product.prop
 
 # RIL
 BOARD_PROVIDES_LIBRIL := true
@@ -190,16 +191,12 @@ BOARD_NFC_CHIPSET := pn547
 # Qualcomm support
 BOARD_USES_QCOM_HARDWARE := true
 
-# Dexpreopt
-ifeq ($(HOST_OS),linux)
-  ifneq ($(TARGET_BUILD_VARIANT),eng)
-    WITH_DEXPREOPT ?= true
-  endif
-endif
-WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
+# Radio
+TARGET_USES_OLD_MNC_FORMAT := true
 
 # Recovery
-TARGET_RECOVERY_FSTAB := $(COMMON_PATH)/rootdir/fstab.qcom
+TARGET_RECOVERY_DEVICE_DIRS += $(COMMON_PATH)
+TARGET_RECOVERY_FSTAB := $(COMMON_PATH)/rootdir/etc/fstab.qcom
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # Shims
@@ -207,19 +204,16 @@ TARGET_LD_SHIM_LIBS := \
      /system/vendor/lib/hw/camera.vendor.msm8994.so|/system/vendor/lib/camera.qcom_shim.so \
      /system/lib64/libsys-utils.so|libsensor.so \
      /system/lib/libcammw.so|libsensor.so \
-     /system/bin/secd|/system/lib64/lib-preload64.so \
      /system/vendor/lib64/libril-qc-qmi-1.so|libaudioclient_shim.so
-
-ifneq ($(BOARD_HAVE_RADIO),false)
-TARGET_LD_SHIM_LIBS += \
-     /system/vendor/lib64/lib-imsvt.so|libshims_ims.so \
-     /system/vendor/lib64/lib-imsdpl.so|libshims_boringssl.so \
-     /system/lib64/lib-imsvideocodec.so|libui_shim.so
-endif
 
 # SELinux
 include device/qcom/sepolicy-legacy/sepolicy.mk
-BOARD_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
+BOARD_VENDOR_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
+BOARD_PLAT_PUBLIC_SEPOLICY_DIR += $(COMMON_PATH)/sepolicy/public
+BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(COMMON_PATH)/sepolicy/private
+
+# SurfaceFlinger
+TARGET_USE_AOSP_SURFACEFLINGER := true
 
 # WiFi
 BOARD_WLAN_DEVICE           := bcmdhd
