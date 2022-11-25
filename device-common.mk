@@ -62,12 +62,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.sip.voip.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
 
-# ANT+
-PRODUCT_PACKAGES += \
-    AntHalService \
-    com.dsi.ant.antradio_library \
-    libantradio
-
 # APEX
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/ld.config.txt:$(TARGET_COPY_OUT_SYSTEM)/etc/swcodec/ld.config.txt
@@ -81,10 +75,8 @@ PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-service \
     android.hardware.audio.effect@2.0-impl:32 \
     android.hardware.audio.effect@6.0-impl:32 \
-	android.hardware.bluetooth.audio@2.0-impl \
     android.hardware.soundtrigger@2.0-impl \
     audio.a2dp.default \
-	audio.bluetooth.default \
     audio.primary.msm8994 \
     audio.r_submix.default \
     audio.usb.default \
@@ -105,8 +97,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/sound_trigger_platform_info.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_platform_info.xml
 
 PRODUCT_COPY_FILES += \
-    frameworks/av/services/audiopolicy/config/a2dp_in_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_in_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/bluetooth_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/a2dp_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/r_submix_audio_policy_configuration.xml \
@@ -129,9 +120,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     tad_static
-
-# Charger
-PRODUCT_PACKAGES += charger_res_images
 
 # CryptfsHW
 PRODUCT_PACKAGES += \
@@ -184,11 +172,11 @@ PRODUCT_PACKAGES += \
     sap.conf
 
 PRODUCT_PACKAGES += \
-    android.hardware.gnss@1.0-impl:64
+    android.hardware.gnss@1.0-impl
 
 # Flash LED config
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/flashled_calc_parameters.cfg:system/etc/flashled_calc_parameters.cfg
+    $(LOCAL_PATH)/configs/flashled_calc_parameters.cfg:$(TARGET_COPY_OUT_SYSTEM)/etc/flashled_calc_parameters.cfg
 
 # Health HAL
 PRODUCT_PACKAGES += \
@@ -241,6 +229,11 @@ PRODUCT_PACKAGES += \
 # LiveDisplay
 # PRODUCT_PACKAGES += \
 #     vendor.lineage.livedisplay@2.0-service-sysfs
+# LiveDisplay
+PRODUCT_PACKAGES += \
+    libshims_postproc \
+    vendor.lineage.livedisplay@2.0-service-legacymm \
+    vendor.lineage.livedisplay@2.0-service-sysfs
 
 # Media
 PRODUCT_PACKAGES += \
