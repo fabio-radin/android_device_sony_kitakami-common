@@ -114,9 +114,11 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    android.hardware.camera.provider@2.4-impl-z4:32 \
+    android.hardware.camera.provider@2.4-impl-z4 \
     camera.msm8994 \
-    Snap
+    Snap \
+    vendor.qti.hardware.camera.device@1.0 \
+    vendor.qti.hardware.camera.device@1.0_vendor
 
 PRODUCT_PACKAGES += \
     tad_static
@@ -226,9 +228,6 @@ PRODUCT_PACKAGES += \
     android.hardware.light@2.0-service \
     lights.msm8994
 
-# LiveDisplay
-# PRODUCT_PACKAGES += \
-#     vendor.lineage.livedisplay@2.0-service-sysfs
 # LiveDisplay
 PRODUCT_PACKAGES += \
     libshims_postproc \

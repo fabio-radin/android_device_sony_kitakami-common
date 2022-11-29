@@ -99,12 +99,13 @@ BOARD_HAVE_BLUETOOTH_BCM := true
 PRODUCT_PLATFORM_SOD := true
 
 # Camera
+BOARD_QTI_CAMERA_32BIT_ONLY := true
 TARGET_USES_MEDIA_EXTENSIONS := true
-MALLOC_SVELTE_FOR_LIBC32 := true
 
 TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
     /system/bin/cameraserver=25 \
     /system/bin/mediaserver=25 \
+    /system/bin/iddd=25 \
     /system/bin/secd=25 \
     /system/bin/tad_static=25 \
     /system/bin/loc_launcher=25 \
