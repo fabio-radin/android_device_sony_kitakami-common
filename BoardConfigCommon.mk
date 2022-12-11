@@ -34,13 +34,13 @@ TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
-TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT := cortex-a53
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := generic
+TARGET_2ND_CPU_VARIANT := cortex-a53
 TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a53
 
 TARGET_USES_64_BIT_BINDER := true
@@ -151,7 +151,10 @@ BOARD_BRCM_HCI_NUM := 26
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
-BOARD_ROOT_EXTRA_FOLDERS := firmware persist
+BOARD_ROOT_EXTRA_FOLDERS := \
+    firmware \
+    persist \
+    lta-label 
 
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
@@ -202,10 +205,12 @@ TARGET_USERIMAGES_USE_EXT4 := true
 
 # Shims
 TARGET_LD_SHIM_LIBS := \
-     /system/vendor/lib/hw/camera.vendor.msm8994.so|/system/vendor/lib/camera.qcom_shim.so \
-     /system/lib64/libsys-utils.so|libsensor.so \
-     /system/lib/libcammw.so|libsensor.so \
-     /system/vendor/lib64/libril-qc-qmi-1.so|libaudioclient_shim.so
+ /system/vendor/lib/hw/camera.vendor.msm8994.so|/system/vendor/lib/camera.qcom_shim.so \
+    /system/lib64/libsys-utils.so|libsensor.so \
+    /system/lib/libcammw.so|libsensor.so \
+    /system/bin/secd|/system/lib64/lib-preload64.so \
+    /system/vendor/lib64/libril-qc-qmi-1.so|libaudioclient_shim.so \
+    /system/vendor/lib64/libmm-abl.so|libshims_postproc.so
 
 # SELinux
 include device/qcom/sepolicy-legacy/sepolicy.mk
@@ -227,6 +232,6 @@ WIFI_DRIVER_FW_PATH_AP      := "/system/etc/firmware/wlan/bcmdhd/fw_bcmdhd_apsta
 WIFI_DRIVER_FW_PATH_STA     := "/system/etc/firmware/wlan/bcmdhd/fw_bcmdhd.bin"
 WPA_SUPPLICANT_VERSION      := VER_0_8_X
 WIFI_AVOID_IFACE_RESET_MAC_CHANGE := true
-
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 # Inherit common blobs
 -include vendor/sony/kitakami-common/BoardConfigVendor.mk

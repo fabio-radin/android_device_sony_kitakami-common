@@ -233,6 +233,9 @@ PRODUCT_PACKAGES += \
     libshims_postproc \
     vendor.lineage.livedisplay@2.0-service-legacymm \
     vendor.lineage.livedisplay@2.0-service-sysfs
+	
+PRODUCT_PACKAGES += \
+    libshims_postproc	
 
 # Media
 PRODUCT_PACKAGES += \

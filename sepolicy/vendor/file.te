@@ -30,3 +30,4 @@ type ramdump_block_device, file_type;
 type addrsetup, domain;
 type addrsetup_exec, exec_type, file_type;
 type sysfs_addrsetup, fs_type, sysfs_type;
+type lta_label, fs_type;
