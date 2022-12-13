@@ -7,4 +7,5 @@ allow toolbox self:capability dac_override;
 allow toolbox diag_data_file:dir { create_dir_perms search };
 allow toolbox firmware_file:dir { open read rmdir write };
 allow toolbox firmware_file:dir search;
-
+allow toolbox unlabeled:dir search;
+allow toolbox rootfs:dir r_dir_perms;

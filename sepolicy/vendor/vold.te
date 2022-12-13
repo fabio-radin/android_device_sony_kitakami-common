@@ -6,3 +6,4 @@ allow vold diag_data_file:dir { r_file_perms read open ioctl };
 allow vold firmware_file:dir search;
 allow vold hal_bootctl_hwservice:hwservice_manager find;
 allow vold diag_partition_device:blk_file { getattr ioctl open read write };
+allow vold rootfs:dir create_dir_perms;

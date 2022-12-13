@@ -1,10 +1,2 @@
-allow sensors mnt_vendor_file:dir { search getattr open read setattr write };
-allow sensors mnt_vendor_file:file { getattr open read append write setattr };
-allow sensors device:dir { write add_name };
-allow sensors input_device:chr_file { relabelfrom getattr link };
-allow sensors input_device:dir search;
-allow sensors tmpfs:file rw_file_perms;
-allow sensors tad_socket:sock_file { write };
-allow sensors sysfs:file { open read };
-allow sensors ta_prop:file { read getattr open };
-
+allow sensors unlabeled:dir create_dir_perms;
+allow sensors unlabeled:file { getattr unlink };

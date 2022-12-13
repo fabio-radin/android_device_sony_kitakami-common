@@ -755,4 +755,3 @@ on property:service.usb.otg.switch.timeout=*
 
 on property:apexd.status=ready
     mount none /system/etc/swcodec/ld.config.txt /apex/com.android.media.swcodec/etc/ld.config.txt bind
-

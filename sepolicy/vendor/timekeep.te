@@ -22,4 +22,5 @@ allow timekeep timekeep_data_file:dir { create_dir_perms search };
 allow timekeep time_data_file:dir { create_dir_perms search };
 allow timekeep time_data_file:file { rw_file_perms write open getattr setattr };
 allow timekeep sysfs:file { r_file_perms read open };
-
+allow timekeep time_data_file:dir rw_dir_perms;
+allow timekeep time_data_file:file create_file_perms;
