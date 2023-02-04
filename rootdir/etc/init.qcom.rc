@@ -143,10 +143,12 @@ on early-boot
 on boot
 
     # execute script to set initial CPU settings
-    # don't run as a service to avoid race conditions
+    # dont run as a service to avoid race conditions
     exec - root system -- /system/vendor/bin/init.qcom.power.sh
 
     # Bluetooth
+    write /data/vendor/bluetooth/bluetooth_bdaddr "40:b8:37:65:7f:9f"
+	chmod 755 /data/vendor/bluetooth/bluetooth_bdaddr
     chown bluetooth net_bt /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt /sys/class/rfkill/rfkill0/state
     chmod 0660 /sys/class/rfkill/rfkill0/state

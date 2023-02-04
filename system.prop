@@ -29,6 +29,7 @@ ro.bluetooth.hfp.ver=1.6
 ro.bt.bdaddr_path=/data/vendor/bluetooth/bluetooth_bdaddr
 ro.rfkilldisabled=1
 persist.bluetooth.bluetooth_audio_hal.disabled=true
+ro.vendor.wifi.addr_path=/sys/devices/platform/bcmdhd_wlan/macaddr
 
 # Camera
 ro.qc.sdk.gestures.camera=false
@@ -38,12 +39,6 @@ camera.disable_zsl_mode=0
 # Charger
 ro.charger.enable_suspend=true
 ro.charger.disable_init_blank=true
-
-# Bluetooth
-bluetooth.enable_timeout_ms=12000
-ro.bluetooth.hfp.ver=1.6
-ro.bt.bdaddr_path=/data/vendor/bluetooth/bluetooth_bdaddr
-ro.vendor.wifi.addr_path=/sys/devices/platform/bcmdhd_wlan/macaddr
 
 # Display
 debug.sf.hw=1
@@ -140,3 +135,4 @@ persist.traced.enable=0
 
 # Wifi
 wifi.interface=wlan0
+persist.data.iwlan.enable=true
