@@ -397,6 +397,9 @@ on post-fs-data
     mkdir /data/misc/location/gpsone_d 0770 system gps
     mkdir /data/misc/location/quipc 0770 gps system
     mkdir /data/misc/location/gsiff 0770 gps gps
+    mkdir /dev/socket/location 0770 gps gps
+    mkdir /dev/socket/location/mq 0770 gps gps
+    mkdir /dev/socket/location/xtra 0770 gps gps
 
     #Create directory from IMS services
     mkdir /data/shared 0755
@@ -447,6 +450,92 @@ on post-fs-data
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
 
+on enable-low-power
+    # some files in /sys/devices/system/cpu are created after the restorecon of
+    # /sys/. These files receive the default label "sysfs".
+    restorecon -R /sys/devices/system/cpu
+
+    chown root system /sys/devices/system/cpu/cpu4/online
+    chmod 0664 /sys/devices/system/cpu/cpu4/online
+    chown root system /sys/devices/system/cpu/cpu5/online
+    chmod 0664 /sys/devices/system/cpu/cpu5/online
+    chown root system /sys/devices/system/cpu/cpu6/online
+    chmod 0664 /sys/devices/system/cpu/cpu6/online
+    chown root system /sys/devices/system/cpu/cpu7/online
+    chmod 0664 /sys/devices/system/cpu/cpu7/online
+
+    # ensure at most one A57 is online when thermal hotplug is disabled
+    write /sys/devices/system/cpu/cpu4/online 1
+    write /sys/devices/system/cpu/cpu5/online 0
+    write /sys/devices/system/cpu/cpu6/online 0
+    write /sys/devices/system/cpu/cpu7/online 0
+
+    # files in /sys/devices/system/cpu4 are created after enabling cpu4.
+    # These files receive the default label "sysfs".
+    # Restorecon again to give new files the correct label.
+    restorecon -R /sys/devices/system/cpu
+
+    # plugin remaining A57s
+    write /sys/devices/system/cpu/cpu5/online 1
+    write /sys/devices/system/cpu/cpu6/online 1
+    write /sys/devices/system/cpu/cpu7/online 1
+
+    chown root system /sys/devices/system/cpu/cpu4/core_ctl/*
+    chmod 0664 /sys/devices/system/cpu/cpu4/core_ctl/*
+
+    # Enable core control
+    write /sys/devices/system/cpu/cpu4/core_ctl/max_cpus 4
+    write /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 0
+    write /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres 60
+    write /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres 30
+    write /sys/devices/system/cpu/cpu4/core_ctl/offline_delay_ms  100
+    write /sys/devices/system/cpu/cpu4/core_ctl/task_thres 4
+    write /sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster 1
+    chown system system /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
+    chown system system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
+
+    # Schedule workqueues on awake CPUs
+    chmod 0664 /sys/module/workqueue/parameters/power_efficient
+    write /sys/module/workqueue/parameters/power_efficient Y
+
+service vendor.imsqmidaemon /system/vendor/bin/imsqmidaemon
+    class main
+    user system
+    socket ims_qmid stream 0660 system radio
+    group radio log diag
+    writepid /dev/cpuset/system-background/tasks
+
+service vendor.imsdatadaemon /system/vendor/bin/imsdatadaemon
+    class main
+    user system
+    socket ims_datad stream 0660 system radio
+    group system wifi radio inet log diag
+    disabled
+
+on property:vendor.ims.QMI_DAEMON_STATUS=1
+    start vendor.imsdatadaemon
+
+service vendor.ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
+    class main
+    user system
+    socket ims_rtpd stream 0660 system radio
+    group radio diag inet log
+    writepid /dev/cpuset/system-background/tasks
+
+service vendor.imsrcsservice /system/vendor/bin/imsrcsd
+   class main
+   user system
+   group radio diag inet log
+   writepid /dev/cpuset/system-background/tasks
+
+on property:vendor.ims.DATA_DAEMON_STATUS=1
+    restart vendor.ims_rtp_daemon
+
+service vendor.imscmservice /system/vendor/bin/imscmservice
+   class main
+   user system
+   group radio diag log
+
 service irsc_util /system/bin/irsc_util "/etc/sec_config"
     class main
     user root
@@ -471,15 +560,11 @@ service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     interface android.hardware.wifi.supplicant@1.0::ISupplicant default
     interface android.hardware.wifi.supplicant@1.1::ISupplicant default
     interface android.hardware.wifi.supplicant@1.2::ISupplicant default
+    interface android.hardware.wifi.supplicant@1.3::ISupplicant default
     class main
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
     oneshot
-
-service loc_launcher /system/bin/loc_launcher
-    #loc_launcher will start as root and set its uid to gps
-    class late_start
-    group gps inet net_raw diag net_admin wifi
 
 on property:ro.data.large_tcp_window_size=true
     # Adjust socket buffer to enlarge TCP receive window for high bandwidth (e.g. DO-RevB)
@@ -511,19 +596,19 @@ on property:sys.listeners.registered=*
     setprop sys.keymaster.loaded ${vendor.sys.listeners.registered}
     setprop vendor.sys.keymaster.loaded ${vendor.sys.listeners.registered}
 
-service perfd /vendor/bin/perfd
+service vendor.perfd /vendor/bin/perfd
     class main
     user root
     group root readproc
     disabled
     writepid /dev/cpuset/system-background/tasks
 
-service vendor.thermal-engine /vendor/bin/thermal-engine -c /vendor/etc/thermal-engine.conf
+service thermal-engine /vendor/bin/thermal-engine
     class main
     user root
-    socket thermal-send-client stream 0660 system system
+    socket thermal-send-client stream 0666 system system
     socket thermal-recv-client stream 0660 system system
-    socket thermal-recv-passive-client stream 0660 system system
+    socket thermal-recv-passive-client stream 0666 system system
     group root
     writepid /dev/cpuset/system-background/tasks
 
@@ -634,6 +719,7 @@ service ppd /system/vendor/bin/mm-pp-daemon
     socket pps stream 0660 system system
     group system graphics
     writepid /dev/cpuset/system-background/tasks
+    disabled
 
 on property:init.svc.per_mgr=running
     start per_proxy
@@ -642,11 +728,11 @@ on property:sys.shutdown.requested=*
     stop per_proxy
 
 # brcm-uim-sysfs (BT/FM/ANT+)
-# service uim /system/vendor/bin/brcm-uim-sysfs
-#     class late_start
-#     user root
-#     group bluetooth net_bt_admin net_bt
-#     writepid /dev/cpuset/system-background/tasks
+service uim /system/vendor/bin/brcm-uim-sysfs
+    class late_start
+    user root
+    group bluetooth net_bt_admin net_bt
+    writepid /dev/cpuset/system-background/tasks
 
 on property:persist.radio.multisim.config=dsds
     enable ril-daemon2
@@ -665,7 +751,8 @@ service secd /system/bin/secd
 
 on property:sys.boot_completed=1
     rm /data/system/perfd/default_values
-    start perfd
+    start vendor.perfd
+    trigger enable-low-power
 
 on property:service.usb.otg.switch=check
     write /sys/module/qpnp_smbcharger_extension/parameters/start_id_polling 1

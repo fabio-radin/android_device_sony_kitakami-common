@@ -49,6 +49,7 @@ ENABLE_CPUSETS := true
 
 # Boot image/kernel
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 boot_cpus=0-5 loop.max_part=7 dwc3_msm.hvdcp_max_current=1500 dwc3_msm.prop_chg_detect=Y coherent_pool=2M swiotlb=2048
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_BASE := 0x00000000
@@ -77,6 +78,7 @@ AUDIO_FEATURE_ENABLED_PCM_OFFLOAD_24 := true
 AUDIO_FEATURE_ENABLED_PROXY_DEVICE := true
 
 AUDIO_USE_LL_AS_PRIMARY_OUTPUT := true
+BOARD_SUPPORTS_SOUND_TRIGGER := true
 BOARD_USES_ALSA_AUDIO := true
 USE_CUSTOM_AUDIO_POLICY := 1
 USE_XML_AUDIO_POLICY_CONF := 1
@@ -89,17 +91,17 @@ BOARD_HAVE_BLUETOOTH_BCM := true
 
 # Camera
 TARGET_USES_MEDIA_EXTENSIONS := true
-USE_DEVICE_SPECIFIC_CAMERA := true
-TARGET_HAS_LEGACY_CAMERA_HAL1 := true
 
 TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
+    /system/bin/cameraserver=25 \
+    /system/bin/mediaserver=25 \
     /system/bin/secd=25 \
     /system/bin/tad_static=25 \
     /system/bin/loc_launcher=25 \
-    /system/bin/mm-qcamera-daemon=25
+    /system/bin/mm-qcamera-daemon=25 \
+    /system/bin/sensors.qcom=25
 
 # Charger
-BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_CHARGER_SHOW_PERCENTAGE := true
 BOARD_CHARGER_DISABLE_INIT_BLANK := true
 
@@ -121,6 +123,7 @@ VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
 SF_VSYNC_EVENT_PHASE_OFFSET_NS := 6000000
 
 # Encryption
+TARGET_CRYPTFS_HW_PATH := vendor/qcom/opensource/commonsys/cryptfs_hw
 TARGET_HW_DISK_ENCRYPTION := true
 
 # Extended filesystem support
@@ -130,7 +133,7 @@ TARGET_EXFAT_DRIVER := sdfat
 TARGET_FS_CONFIG_GEN := $(COMMON_PATH)/config.fs
 
 # FM radio
-BOARD_HAVE_BCM_FM := false #UIM not compatible with Oreo, yet;
+BOARD_HAVE_BCM_FM := true
 
 # BT/FM (Broadcom): Adjust the sysfs patch for 3.10 kernel
 BOARD_HAVE_BCM_FM_SYSFS := "/sys/bus/platform/drivers/bcm_ldisc/bcm_ldisc/"
@@ -146,10 +149,17 @@ TARGET_PROVIDES_LIBLIGHT := true
 
 # HIDL
 DEVICE_MANIFEST_FILE := $(COMMON_PATH)/manifest.xml
-DEVICE_MATRIX_FILE := $(COMMON_PATH)/compatibility_matrix.xml
+PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
+
+ifneq ($(BOARD_HAVE_RADIO),false)
+DEVICE_MANIFEST_FILE += $(COMMON_PATH)/manifest_radio.xml
+endif
 
 # Init
 TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
+
+# IPA
+TARGET_USES_NO_MTU_IPACM := true
 
 # Properties
 TARGET_SYSTEM_PROP += $(COMMON_PATH)/system.prop
@@ -157,6 +167,7 @@ TARGET_SYSTEM_PROP += $(COMMON_PATH)/system.prop
 BOARD_ROOT_EXTRA_FOLDERS := \
     firmware \
     persist \
+    lta-label \
     rca
 
 # RIL
@@ -167,6 +178,9 @@ TARGET_NO_RPC := true
 
 # Keymaster
 TARGET_PROVIDES_KEYMASTER := true
+
+# memfd
+TARGET_HAS_MEMFD_BACKPORT := true
 
 # NFC
 NFC_NXP_CHIP_TYPE := PN547C2
@@ -189,19 +203,22 @@ TARGET_USERIMAGES_USE_EXT4 := true
 
 # Shims
 TARGET_LD_SHIM_LIBS := \
-     /system/vendor/lib/hw/camera.vendor.qcom.so|/system/vendor/lib/libshim_camera.so \
+     /system/vendor/lib/hw/camera.vendor.msm8994.so|/system/vendor/lib/camera.qcom_shim.so \
      /system/lib64/libsys-utils.so|libsensor.so \
      /system/lib/libcammw.so|libsensor.so \
-     /system/vendor/lib/libizat_core.so|/system/vendor/lib/libshim_gps.so \
-     /system/vendor/lib64/libizat_core.so|/system/vendor/lib64/libshim_gps.so \
-     /system/bin/secd|/system/lib64/lib-preload64.so
+     /system/bin/secd|/system/lib64/lib-preload64.so \
+     /system/vendor/lib64/libril-qc-qmi-1.so|libaudioclient_shim.so
+
+ifneq ($(BOARD_HAVE_RADIO),false)
+TARGET_LD_SHIM_LIBS += \
+     /system/vendor/lib64/lib-imsvt.so|libshims_ims.so \
+     /system/vendor/lib64/lib-imsdpl.so|libshims_boringssl.so \
+     /system/lib64/lib-imsvideocodec.so|libui_shim.so
+endif
 
 # SELinux
-include device/qcom/sepolicy-legacy/sepolicy.mk
-BOARD_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
-
-# Sensors
-USE_SENSOR_MULTI_HAL := true
+# include device/qcom/sepolicy-legacy/sepolicy.mk
+# BOARD_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
 
 # WiFi
 BOARD_WLAN_DEVICE           := bcmdhd
@@ -213,7 +230,7 @@ WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/bcmdhd/parameters/firmware_path"
 WIFI_DRIVER_FW_PATH_AP      := "/system/etc/firmware/wlan/bcmdhd/fw_bcmdhd_apsta.bin"
 WIFI_DRIVER_FW_PATH_STA     := "/system/etc/firmware/wlan/bcmdhd/fw_bcmdhd.bin"
 WPA_SUPPLICANT_VERSION      := VER_0_8_X
-WIFI_HIDL_FEATURE_DISABLE_AP_MAC_RANDOMIZATION := true
+WIFI_AVOID_IFACE_RESET_MAC_CHANGE := true
 
 # Inherit common blobs
 -include vendor/sony/kitakami-common/BoardConfigVendor.mk

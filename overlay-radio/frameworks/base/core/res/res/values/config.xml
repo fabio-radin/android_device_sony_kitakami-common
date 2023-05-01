@@ -20,17 +20,6 @@
     <!-- Traffic stats -->
     <string name="config_datause_iface">rmnet0</string>
 
-    <!-- Array of ConnectivityManager.TYPE_xxxx values allowable for tethering -->
-    <!-- Common options are [1, 4] for TYPE_WIFI and TYPE_MOBILE_DUN or
-    <!== [0,1,5,7] for TYPE_MOBILE, TYPE_WIFI, TYPE_MOBILE_HIPRI and TYPE_BLUETOOTH -->
-    <integer-array translatable="false" name="config_tether_upstream_types">
-        <item>0</item>
-        <item>1</item>
-        <item>4</item>
-        <item>5</item>
-        <item>7</item>
-    </integer-array>
-
     <!-- Configure mobile tcp buffer sizes in the form:
          rat-name:rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max
          If no value is found for the rat-name in use, the system default will be applied.
@@ -81,4 +70,16 @@
         <item>0,1</item>
         <item>7,1</item>
     </string-array>
+
+    <!-- Flag specifying whether VoLTE, VT and WFC is available on device -->
+    <bool name="config_device_volte_available">true</bool>
+    <bool name="config_device_vt_available">false</bool>
+    <bool name="config_device_wfc_ims_available">false</bool>
+
+    <!-- Flag specifying whether VoLTE & VT should be available for carrier: independent of
+         carrier provisioning. If false: hard disabled. If true: then depends on carrier
+         provisioning, availability etc -->
+    <bool name="config_carrier_volte_available">true</bool>
+    <bool name="config_carrier_vt_available">false</bool>
+    <bool name="config_carrier_wfc_ims_available">false</bool>
 </resources>

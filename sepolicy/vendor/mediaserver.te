@@ -8,5 +8,3 @@ allow mediaserver qcamerasvr:unix_stream_socket connectto;
 allow mediaserver system_server:unix_stream_socket write;
 allow mediaserver sysfs:file open;
 allow mediaserver sysfs:file read;
-
-
