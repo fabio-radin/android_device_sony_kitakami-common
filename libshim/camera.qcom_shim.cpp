@@ -116,15 +116,6 @@ extern "C" void* _ZN7android21SurfaceComposerClient13createSurfaceERKNS_7String8
                                                         uint32_t* outTransformHint);
 
 
-
-extern "C" void* _ZN7android21SurfaceComposerClient13createSurfaceERKNS_7String8Ejjij(
-    const android::String8& name, uint32_t w, uint32_t h, PixelFormat format,
-    uint32_t flags) {
-  android::LayerMetadata metadata;
-  sc = _ZN7android21SurfaceComposerClient13createSurfaceERKNS_7String8EjjijPNS_14SurfaceControlENS_13LayerMetadataEPj(name, w, h, format, flags, nullptr, metadata, nullptr);
-  return sc;
-}
-
 // status_t setLayer(uint32_t layer);
 extern "C" status_t _ZN7android14SurfaceControl8setLayerEj(uint32_t layer) {
   t->setLayer((SurfaceControl*)sc, layer);
@@ -176,13 +167,6 @@ extern "C" void _ZN7android21SurfaceComposerClient22closeGlobalTransactionEb(){
 
 //<sp<IBinder> SurfaceComposerClient::getPhysicalDisplayToken(unsigned long long)
 extern "C" void *_ZN7android21SurfaceComposerClient23getPhysicalDisplayTokenEy(unsigned long long);
-
-//sp<IBinder> SurfaceComposerClient::getBuiltInDisplay(int32_t id); 
-extern "C" void* _ZN7android21SurfaceComposerClient17getBuiltInDisplayEi(int32_t id){
-  return _ZN7android21SurfaceComposerClient23getPhysicalDisplayTokenEy(static_cast<uint64_t>(id));
-}
-
-
 extern "C" void _ZN7android14SurfaceControlD0Ev(void);
 extern "C" void _ZN7android14SurfaceControlD1Ev(void);
 extern "C" void _ZN7android14SurfaceControlD2Ev(void);

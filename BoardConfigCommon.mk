@@ -20,7 +20,9 @@ COMMON_PATH := device/sony/kitakami-common
 TARGET_SPECIFIC_HEADER_PATH += $(COMMON_PATH)/include
 
 BOARD_VENDOR := sony
-
+# Build
+BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := MSM8994
 TARGET_NO_BOOTLOADER := true
@@ -60,6 +62,7 @@ BOARD_RAMDISK_OFFSET := 0x02000000
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/sony/msm8994
+TARGET_KERNEL_CLANG_COMPILE := false
 
 # Kernel flags
 TARGET_KERNEL_ADDITIONAL_FLAGS := \
@@ -154,7 +157,9 @@ TARGET_USERIMAGES_USE_F2FS := true
 BOARD_ROOT_EXTRA_FOLDERS := \
     firmware \
     persist \
-    lta-label 
+    idd \
+    lta-label \
+    rca
 
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
@@ -198,6 +203,14 @@ BOARD_USES_QCOM_HARDWARE := true
 # Radio
 TARGET_USES_OLD_MNC_FORMAT := true
 
+# Dexpreopt
+ifeq ($(HOST_OS),linux)
+  ifneq ($(TARGET_BUILD_VARIANT),eng)
+    WITH_DEXPREOPT ?= true
+  endif
+endif
+WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
+
 # Recovery
 TARGET_RECOVERY_DEVICE_DIRS += $(COMMON_PATH)
 TARGET_RECOVERY_FSTAB := $(COMMON_PATH)/rootdir/etc/fstab.qcom
@@ -213,10 +226,12 @@ TARGET_LD_SHIM_LIBS := \
     /system/vendor/lib64/libmm-abl.so|libshims_postproc.so
 
 # SELinux
-include device/qcom/sepolicy-legacy/sepolicy.mk
-BOARD_VENDOR_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
-BOARD_PLAT_PUBLIC_SEPOLICY_DIR += $(COMMON_PATH)/sepolicy/public
-BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(COMMON_PATH)/sepolicy/private
+#include device/qcom/sepolicy-legacy/sepolicy.mk
+#BOARD_VENDOR_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
+#BOARD_PLAT_PUBLIC_SEPOLICY_DIR += $(COMMON_PATH)/sepolicy/public
+#BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(COMMON_PATH)/sepolicy/private
+BOARD_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy-minimal
+SELINUX_IGNORE_NEVERALLOWS := true
 
 # SurfaceFlinger
 TARGET_USE_AOSP_SURFACEFLINGER := true

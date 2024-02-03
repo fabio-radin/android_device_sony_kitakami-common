@@ -131,7 +131,7 @@ ro.sony.sensors.pug=false
 ro.qc.sdk.sensors.gestures=true
 
 # Traced
-persist.traced.enable=0
+#persist.traced.enable=0
 
 # Wifi
 wifi.interface=wlan0
