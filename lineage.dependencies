@@ -4,11 +4,11 @@
     "target_path": "hardware/sony/timekeep"
   },
   {
-    "repository": "android_kernel_sony_msm8994",
+    "repository": "fabio-radin/android_kernel_sony_msm8994",
     "target_path": "kernel/sony/msm8994"
   },
   {
-    "repository": "proprietary_vendor_sony_extras",
-    "target_path": "vendor/sony/kitakami-common-extras"
+    "repository": "fabio-radin/proprietary_vendor_sony",
+    "target_path": "vendor/sony"
   }
 ]
